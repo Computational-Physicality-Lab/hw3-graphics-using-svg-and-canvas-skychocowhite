@@ -5,8 +5,8 @@ class Layer {
 
   getLayerPoint(layer, x, y) {
     let point = {
-      x: x - layer.getBoundingClientRect().x,
-      y: y - layer.getBoundingClientRect().y
+      x: x - layer.getBoundingClientRect().left,
+      y: y - layer.getBoundingClientRect().top
     };
     return point;
   }
@@ -29,12 +29,146 @@ class CanvasLayer extends Layer {
     super();
   }
 
-  drawLine() { }
 
-  drawRectangle() {
+  drawLine(event, context) {
+    let tmpLayer = document.getElementById('tmpCanvasLayer');
+    let point = this.getLayerPoint(tmpLayer, event.clientX, event.clientY);
+
+    context.firstMouseX = point.x;
+    context.firstMouseY = point.y;
   }
 
-  drawOval() { }
+  scaleLine(event, context) {
+    let tmpLayer = document.getElementById('tmpCanvasLayer');
+    let ctx = tmpLayer.getContext('2d');
+    let point = this.getLayerPoint(tmpLayer, event.clientX, event.clientY);
+
+    ctx.clearRect(0, 0, tmpLayer.width, tmpLayer.height);
+    ctx.strokeStyle = context.borderColor;
+    ctx.lineWidth = context.borderWidth;
+    ctx.beginPath();
+    ctx.moveTo(context.firstMouseX, context.firstMouseY);
+    ctx.lineTo(point.x, point.y);
+    ctx.stroke();
+  }
+
+  createLine(event, context) {
+    let canvasLayer = document.getElementById('canvasLayer');
+    let tmpLayer = document.getElementById('tmpCanvasLayer');
+    let ctx = canvasLayer.getContext('2d');
+    let tmpCtx = tmpLayer.getContext('2d');
+    let point = this.getLayerPoint(canvasLayer, event.clientX, event.clientY);
+    let dx = point.x - context.firstMouseX;
+    let dy = point.y - context.firstMouseY;
+
+    if (dx * dx + dy * dy >= 10) {
+      ctx.drawImage(tmpLayer, 0, 0);
+    }
+    tmpCtx.clearRect(0, 0, canvasLayer.width, canvasLayer.height);
+    context.firstMouseX = context.firstMouseY = 0;
+  }
+
+  drawRectangle(event, context) {
+    let tmpLayer = document.getElementById('tmpCanvasLayer');
+    let point = this.getLayerPoint(tmpLayer, event.clientX, event.clientY);
+
+    context.firstMouseX = point.x;
+    context.firstMouseY = point.y;
+  }
+
+  scaleRectangle(event, context) {
+    let tmpLayer = document.getElementById('tmpCanvasLayer');
+    let ctx = tmpLayer.getContext('2d');
+    let point = this.getLayerPoint(tmpLayer, event.clientX, event.clientY);
+
+    ctx.clearRect(0, 0, tmpLayer.width, tmpLayer.height);
+    ctx.beginPath();
+    ctx.fillStyle = context.fillColor;
+    ctx.strokeStyle = context.borderColor;
+    ctx.lineWidth = context.borderWidth;
+    if (context.fillColor !== 'none') {
+      ctx.fillRect(
+        Math.min(point.x, context.firstMouseX),
+        Math.min(point.y, context.firstMouseY),
+        Math.abs(point.x - context.firstMouseX),
+        Math.abs(point.y - context.firstMouseY)
+      );
+    }
+    if (context.borderColor !== 'none') {
+      ctx.strokeRect(
+        Math.min(point.x, context.firstMouseX),
+        Math.min(point.y, context.firstMouseY),
+        Math.abs(point.x - context.firstMouseX),
+        Math.abs(point.y - context.firstMouseY)
+      );
+    }
+  }
+
+  createRectangle(event, context) {
+    let canvasLayer = document.getElementById('canvasLayer');
+    let tmpLayer = document.getElementById('tmpCanvasLayer');
+    let ctx = canvasLayer.getContext('2d');
+    let tmpCtx = tmpLayer.getContext('2d');
+    let point = this.getLayerPoint(canvasLayer, event.clientX, event.clientY);
+
+    if (Math.abs(point.x - context.firstMouseX) >= 10 &&
+      Math.abs(point.y - context.firstMouseY) >= 10) {
+
+      ctx.drawImage(tmpLayer, 0, 0);
+    }
+    tmpCtx.clearRect(0, 0, tmpLayer.width, tmpLayer.height);
+    context.firstMouseX = context.firstMouseY = 0;
+  }
+
+  drawOval(event, context) {
+    let tmpLayer = document.getElementById('tmpCanvasLayer');
+    let point = this.getLayerPoint(tmpLayer, event.clientX, event.clientY);
+
+    context.firstMouseX = point.x;
+    context.firstMouseY = point.y;
+  }
+
+  scaleOval(event, context) {
+    let tmpLayer = document.getElementById('tmpCanvasLayer');
+    let ctx = tmpLayer.getContext('2d');
+    let point = this.getLayerPoint(tmpLayer, event.clientX, event.clientY);
+
+    ctx.clearRect(0, 0, tmpLayer.width, tmpLayer.height);
+    ctx.beginPath();
+    ctx.fillStyle = context.fillColor;
+    ctx.strokeStyle = context.borderColor;
+    ctx.lineWidth = context.borderWidth;
+    ctx.ellipse(
+      (point.x + context.firstMouseX) / 2,
+      (point.y + context.firstMouseY) / 2,
+      Math.abs(point.x - context.firstMouseX) / 2,
+      Math.abs(point.y - context.firstMouseY) / 2,
+      0, 0, 2 * Math.PI
+    );
+
+    if (context.fillColor !== 'none') {
+      ctx.fill();
+    }
+    if (context.borderColor !== 'none') {
+      ctx.stroke();
+    }
+  }
+
+  createOval(event, context) {
+    let canvasLayer = document.getElementById('canvasLayer');
+    let tmpLayer = document.getElementById('tmpCanvasLayer');
+    let ctx = canvasLayer.getContext('2d');
+    let tmpCtx = tmpLayer.getContext('2d');
+    let point = this.getLayerPoint(canvasLayer, event.clientX, event.clientY);
+
+    if (Math.abs(point.x - context.firstMouseX) >= 10 &&
+      Math.abs(point.y - context.firstMouseY) >= 10) {
+
+      ctx.drawImage(tmpLayer, 0, 0);
+    }
+    tmpCtx.clearRect(0, 0, tmpLayer.width, tmpLayer.height);
+    context.firstMouseX = context.firstMouseY = 0;
+  }
 }
 
 class SVGLayer extends Layer {
@@ -61,7 +195,7 @@ class SVGLayer extends Layer {
     svgLayer.appendChild(element);
   }
 
-  moveLine(event, context) {
+  scaleLine(event, context) {
     let element = context.drawingElement;
     let svgLayer = document.getElementById('svgLayer');
     let point = this.getLayerPoint(svgLayer, event.clientX, event.clientY);
@@ -79,10 +213,9 @@ class SVGLayer extends Layer {
 
     if (dx * dx + dy * dy < 100) {
       element.remove();
-    } else {
-      context.firstMouseX = context.firstMouseY = 0.0;
-      context.drawingElement = undefined;
     }
+    context.firstMouseX = context.firstMouseY = 0.0;
+    context.drawingElement = undefined;
   }
 
   drawRectangle(event, context) {
@@ -125,10 +258,9 @@ class SVGLayer extends Layer {
       Math.abs(context.firstMouseY - point.y) < 10) {
 
       element.remove();
-    } else {
-      context.firstMouseX = context.firstMouseY = 0.0;
-      context.drawingElement = undefined;
     }
+    context.firstMouseX = context.firstMouseY = 0.0;
+    context.drawingElement = undefined;
   }
 
   drawOval(event, context) {
@@ -171,10 +303,9 @@ class SVGLayer extends Layer {
       Math.abs(point.y - context.firstMouseY) < 10) {
 
       element.remove();
-    } else {
-      context.firstMouseX = context.firstMouseY = 0.0;
-      context.drawingElement = undefined;
     }
+    context.firstMouseX = context.firstMouseY = 0.0;
+    context.drawingElement = undefined;
   }
 }
 

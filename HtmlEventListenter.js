@@ -3,6 +3,7 @@ import { CanvasLayer, SVGLayer } from './Layer.js';
 import { SelectionMode, LineMode, RectangleMode, OvalMode } from './Mode.js';
 
 const canvasLayer = document.querySelector("#canvasLayer");
+const tmpCanvasLayer = document.querySelector("#tmpCanvasLayer");
 const svgLayer = document.querySelector("#svgLayer");
 const rectangleModeSquare = document.querySelector("#rectangleModeSquare");
 const ovalModeCircle = document.querySelector("#ovalModeCircle");
@@ -19,6 +20,11 @@ const colorMap = {
   'green': 'rgb(134, 201, 134)',
 }
 
+canvasLayer.width = canvasLayer.clientWidth;
+canvasLayer.height = canvasLayer.clientHeight;
+tmpCanvasLayer.width = tmpCanvasLayer.clientWidth;
+tmpCanvasLayer.height = tmpCanvasLayer.clientHeight;
+
 let painter = new Painter();
 
 function doEvent(event) {
@@ -33,16 +39,16 @@ document.querySelectorAll('input[name="layer"]').forEach((element) => {
 
     if (event.target.value === 'canvas') {
       painter.layer = new CanvasLayer();
-      canvasLayer.style.display = 'initial';
-      svgLayer.style.display = 'none';
+      canvasLayer.style.visibility = 'visible';
+      svgLayer.style.visibility = 'hidden';
     } else if (event.target.value === 'svg') {
       painter.layer = new SVGLayer();
-      canvasLayer.style.display = 'initial';
-      svgLayer.style.display = 'none';
+      canvasLayer.style.visibility = 'hidden';
+      svgLayer.style.visibility = 'visible';
     } else if (event.target.value === 'all') {
       painter.layer = undefined;
-      canvasLayer.style.display = 'initial';
-      svgLayer.style.display = 'initial';
+      canvasLayer.style.visibility = 'visible';
+      svgLayer.style.visibility = 'visible';
     } else {
       throw new Error('Undefined layer selection is clicked');
     }
@@ -107,6 +113,10 @@ document.querySelectorAll('input[name="fillColor"]').forEach((element) => {
     }
   });
 });
+
+tmpCanvasLayer.addEventListener('mousedown', doEvent);
+tmpCanvasLayer.addEventListener('mousemove', doEvent);
+tmpCanvasLayer.addEventListener('mouseup', doEvent);
 
 svgLayer.addEventListener('mousedown', doEvent);
 svgLayer.addEventListener('mousemove', doEvent);

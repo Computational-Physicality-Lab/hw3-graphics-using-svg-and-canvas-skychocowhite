@@ -1,7 +1,7 @@
 import { Context } from "./Context.js";
 import { IdleState } from "./State.js";
 import { SVGLayer } from "./Layer.js";
-import { SelectionMode } from "./Mode.js";
+import { RectangleMode } from "./Mode.js";
 
 class Painter {
   constructor() {
@@ -9,7 +9,7 @@ class Painter {
     this.state = new IdleState(this);
     this.layer = new SVGLayer();
     this.layerMode = "svg";
-    this.mode = new SelectionMode();
+    this.mode = new RectangleMode();
   }
 
   setMode(mode) {

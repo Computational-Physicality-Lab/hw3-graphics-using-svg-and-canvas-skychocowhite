@@ -42,7 +42,7 @@ class LineMode extends Mode {
   }
 
   move(layer, event, context) {
-    layer.moveLine(event, context);
+    layer.scaleLine(event, context);
   }
 
   create(layer, event, context) {

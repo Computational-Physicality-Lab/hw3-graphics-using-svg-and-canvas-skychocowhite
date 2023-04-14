@@ -12,11 +12,6 @@
   <link rel="stylesheet" type="text/css" href="style.css">
 
   <!-- Your JS Code -->
-  <!-- <script src="Context.js"></script>
-  <script src="Layer.js"></script>
-  <script src="Mode.js"></script>
-  <script src="State.js"></script>
-  <script src="Painter.js"></script> -->
   <script type="module" src="HtmlEventListenter.js"></script>
 </head>
 
@@ -48,7 +43,7 @@
 
       <div id="modes" class="block">
         <div class="selectable">
-          <input type="radio" name="mode" value="cursor" id="cursorMode" checked="checked">
+          <input type="radio" name="mode" value="cursor" id="cursorMode">
           <label for="cursorMode">
             <img src="assets/cursor.png" alt="A cursor">
           </label>
@@ -62,7 +57,7 @@
         </div>
 
         <div class="selectable">
-          <input type="radio" name="mode" value="rectangle" id="rectangleMode">
+          <input type="radio" name="mode" value="rectangle" id="rectangleMode" checked="checked">
           <label for="rectangleMode" id="rectangleModeSquare"></label>
         </div>
 
@@ -179,6 +174,8 @@
 
     <div id="drawArea">
       <canvas id="canvasLayer" class="layer">
+      </canvas>
+      <canvas id="tmpCanvasLayer" class="layer">
       </canvas>
 
       <svg id="svgLayer" class="layer">
