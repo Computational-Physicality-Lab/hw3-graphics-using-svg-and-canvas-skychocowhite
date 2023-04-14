@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>SSUI HW3</title>
+
+  <!-- Fonts -->
+  <!-- Your CSS Code -->
+  <link rel="stylesheet" type="text/css" href="style.css">
+
+  <!-- Your JS Code -->
+  <script src="main.js"></script>
+</head>
+
+<body>
+  <div id="mainPanel">
+
+    <div id="sidebar">
+
+      <h3> Layers: </h3>
+
+      <div id="layerSelections">
+        <div>
+          <input type="radio" name="layer" value="canvas" id="canvasLayerSelection">
+          <label for="canvasLayerSelection" class="button"> Show Canvas layer </label>
+        </div>
+
+        <div>
+          <input type="radio" name="layer" value="svg" id="svgLayerSelection" checked="checked">
+          <label for="svgLayerSelection" class="button"> Show SVG layer </label>
+        </div>
+
+        <div>
+          <input type="radio" name="layer" value="all" id="allLayerSelection">
+          <label for="allLayerSelection" class="button"> Show both layers </label>
+        </div>
+      </div>
+
+      <h3> Mode: </h3>
+
+      <div id="modes" class="block">
+        <div class="selectable">
+          <input type="radio" name="mode" value="cursor" id="cursorMode" checked="checked">
+          <label for="cursorMode">
+            <img src="assets/cursor.png" alt="A cursor">
+          </label>
+        </div>
+
+        <div class="selectable">
+          <input type="radio" name="mode" value="line" id="lineMode">
+          <label for="lineMode">
+            <img src="assets/line.png" alt="A line">
+          </label>
+        </div>
+
+        <div class="selectable">
+          <input type="radio" name="mode" value="rectangle" id="rectangleMode">
+          <label for="rectangleMode" id="rectangleModeSquare"></label>
+        </div>
+
+        <div class="selectable">
+          <input type="radio" name="mode" value="oval" id="ovalMode">
+          <label for="ovalMode" id="ovalModeCircle"></label>
+        </div>
+      </div>
+
+      <h3> Border color: </h3>
+
+      <div id="borderColors" class="block">
+        <div class="selectable">
+          <input type="radio" name="borderColor" value="none" id="noneBorderColor">
+          <label for="noneBorderColor"> None </label>
+        </div>
+
+        <div class="selectable">
+          <input type="radio" name="borderColor" value="white" id="whiteBorderColor">
+          <label for="whiteBorderColor" class="whiteColorRectangle"></label>
+        </div>
+
+        <div class="selectable">
+          <input type="radio" name="borderColor" value="gray" id="grayBorderColor">
+          <label for="grayBorderColor" class="grayColorRectangle"></label>
+        </div>
+
+        <div class="selectable">
+          <input type="radio" name="borderColor" value="black" id="blackBorderColor" checked="checked">
+          <label for="blackBorderColor" class="blackColorRectangle"></label>
+        </div>
+
+        <div class="selectable">
+          <input type="radio" name="borderColor" value="yellow" id="yellowBorderColor">
+          <label for="yellowBorderColor" class="yellowColorRectangle"></label>
+        </div>
+
+        <div class="selectable">
+          <input type="radio" name="borderColor" value="red" id="redBorderColor">
+          <label for="redBorderColor" class="redColorRectangle"></label>
+        </div>
+
+        <div class="selectable">
+          <input type="radio" name="borderColor" value="blue" id="blueBorderColor">
+          <label for="blueBorderColor" class="blueColorRectangle"></label>
+        </div>
+
+        <div class="selectable">
+          <input type="radio" name="borderColor" value="green" id="greenBorderColor">
+          <label for="greenBorderColor" class="greenColorRectangle"></label>
+        </div>
+      </div>
+
+      <h3> Border width: </h3>
+
+      <div>
+        <input type="range" id="borderWidthBar" name="borderWidth" value="3" min="1" max="30" step="1"
+          oninput="this.nextElementSibling.value = this.value">
+        <output>3</output>
+      </div>
+
+      <h3> Fill color: </h3>
+
+      <div id="fillColors" class="block">
+        <div class="selectable">
+          <input type="radio" name="fillColor" value="none" id="noneFillColor">
+          <label for="noneFillColor"> None </label>
+        </div>
+
+        <div class="selectable">
+          <input type="radio" name="fillColor" value="white" id="whiteFillColor">
+          <label for="whiteFillColor" class="whiteColorRectangle"></label>
+        </div>
+
+        <div class="selectable">
+          <input type="radio" name="fillColor" value="gray" id="grayFillColor">
+          <label for="grayFillColor" class="grayColorRectangle"></label>
+        </div>
+
+        <div class="selectable">
+          <input type="radio" name="fillColor" value="black" id="blackFillColor">
+          <label for="blackFillColor" class="blackColorRectangle"></label>
+        </div>
+
+        <div class="selectable">
+          <input type="radio" name="fillColor" value="yellow" id="yellowFillColor">
+          <label for="yellowFillColor" class="yellowColorRectangle"></label>
+        </div>
+
+        <div class="selectable">
+          <input type="radio" name="fillColor" value="red" id="redFillColor">
+          <label for="redFillColor" class="redColorRectangle"></label>
+        </div>
+
+        <div class="selectable">
+          <input type="radio" name="fillColor" value="blue" id="blueFillColor">
+          <label for="blueFillColor" class="blueColorRectangle"></label>
+        </div>
+
+        <div class="selectable">
+          <input type="radio" name="fillColor" value="green" id="greenFillColor" checked="checked">
+          <label for="greenFillColor" class="greenColorRectangle"></label>
+        </div>
+      </div>
+
+      <h3> Delete: </h3>
+
+      <div id="deleteButtons">
+        <button type="button"> Delete </button>
+        <button type="button"> Delete All </button>
+      </div>
+
+    </div>
+
+    <div id="drawArea">
+      <canvas id="canvasLayer" class="layer">
+      </canvas>
+
+      <div id="svgLayer" class="layer">
+      </div>
+    </div>
+
+  </div>
+</body>
+
+</html>
