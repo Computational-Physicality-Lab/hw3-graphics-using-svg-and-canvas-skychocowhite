@@ -1,10 +1,6 @@
-let painter = new Painter();
-
-function doEvent(event) {
-  console.log(event.type);
-  painter.doEvent(event);
-  event.stopPropagation();
-}
+import { Painter } from './Painter.js'
+import { CanvasLayer, SVGLayer } from './Layer.js';
+import { SelectionMode, LineMode, RectangleMode, OvalMode } from './Mode.js';
 
 const canvasLayer = document.querySelector("#canvasLayer");
 const svgLayer = document.querySelector("#svgLayer");
@@ -13,7 +9,7 @@ const ovalModeCircle = document.querySelector("#ovalModeCircle");
 const borderNoneButton = document.querySelector('#noneBorderColor');
 const fillNoneButton = document.querySelector('#noneFillColor');
 
-let colorMap = {
+const colorMap = {
   'white': 'white',
   'gray': 'gray',
   'black': 'black',
@@ -23,16 +19,30 @@ let colorMap = {
   'green': 'rgb(134, 201, 134)',
 }
 
+let painter = new Painter();
+
+function doEvent(event) {
+  console.log(event.type);
+  painter.doEvent(event);
+  event.stopPropagation();
+}
+
 document.querySelectorAll('input[name="layer"]').forEach((element) => {
   element.addEventListener('change', function (event) {
     console.log(event.target.value + ' is clicked');
 
     if (event.target.value === 'canvas') {
-      painter.layer = canvasLayer;
+      painter.layer = new CanvasLayer();
+      canvasLayer.style.display = 'initial';
+      svgLayer.style.display = 'none';
     } else if (event.target.value === 'svg') {
-      painter.layer = svgLayer;
+      painter.layer = new SVGLayer();
+      canvasLayer.style.display = 'initial';
+      svgLayer.style.display = 'none';
     } else if (event.target.value === 'all') {
       painter.layer = undefined;
+      canvasLayer.style.display = 'initial';
+      svgLayer.style.display = 'initial';
     } else {
       throw new Error('Undefined layer selection is clicked');
     }
@@ -78,7 +88,7 @@ document.querySelectorAll('input[name="borderColor"]').forEach((element) => {
 document.querySelector('input[name="borderWidth"]').addEventListener('change', function (event) {
   console.log('border width set to ' + event.target.value);
 
-  painter.context.borderWidht = event.target.value;
+  painter.context.borderWidth = event.target.value;
 });
 
 document.querySelectorAll('input[name="fillColor"]').forEach((element) => {
@@ -98,3 +108,6 @@ document.querySelectorAll('input[name="fillColor"]').forEach((element) => {
   });
 });
 
+svgLayer.addEventListener('mousedown', doEvent);
+svgLayer.addEventListener('mousemove', doEvent);
+svgLayer.addEventListener('mouseup', doEvent);

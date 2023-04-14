@@ -1,8 +1,13 @@
+import { Context } from "./Context.js";
+import { IdleState } from "./State.js";
+import { SVGLayer } from "./Layer.js";
+import { SelectionMode } from "./Mode.js";
+
 class Painter {
   constructor() {
     this.context = new Context();
-    this.state = new IdleState();
-    this.layer = undefined;
+    this.state = new IdleState(this);
+    this.layer = new SVGLayer();
     this.layerMode = "svg";
     this.mode = new SelectionMode();
   }
@@ -12,7 +17,7 @@ class Painter {
   }
 
   setLayer(layer) {
-    this.layer = Layer;
+    this.layer = layer;
   }
 
   doEvent(event) {
@@ -23,3 +28,5 @@ class Painter {
     this.state = state;
   }
 }
+
+export { Painter };
