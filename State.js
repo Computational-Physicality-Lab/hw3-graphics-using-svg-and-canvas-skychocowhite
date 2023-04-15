@@ -1,5 +1,7 @@
+import { SelectionMode } from "./Mode.js";
+
 class State {
-  constructor() { }
+  constructor() { /* Base class constructor */ }
 
   doEvent(event) {
     throw new Error('doEvent method not implemented');
@@ -14,13 +16,15 @@ class IdleState extends State {
 
   doEvent(event) {
     if (event.type === 'mousedown') {
-      this.painter.mode.draw(this.painter.layer, event, this.painter.context);
-      this.painter.changeState(new MousedownState(this.painter));
+      if (!(this.mode instanceof SelectionMode)) {
+        this.painter.mode.draw(this.painter.layer, event, this.painter.context);
+        this.painter.changeState(new DrawMousedownState(this.painter));
+      }
     }
   }
 }
 
-class MousedownState extends State {
+class DrawMousedownState extends State {
   constructor(painter) {
     super();
     this.painter = painter;
@@ -28,13 +32,20 @@ class MousedownState extends State {
 
   doEvent(event) {
     if (event.type === 'mousemove') {
-      this.painter.mode.move(this.painter.layer, event, this.painter.context);
-      this.painter.changeState(new MousemoveState(this.painter));
+      if (!(this.mode instanceof SelectionMode)) {
+        this.painter.mode.move(this.painter.layer, event, this.painter.context);
+        this.painter.changeState(new DrawMousemoveState(this.painter));
+      }
+    } else if (event.type === 'keydown' && event.code === 'Escape') {
+      if (!(this.mode instanceof SelectionMode)) {
+        this.painter.layer.removeCurrentElement(event, this.painter.context);
+        this.painter.changeState(new IdleState(this.painter));
+      }
     }
   }
 }
 
-class MousemoveState extends State {
+class DrawMousemoveState extends State {
   constructor(painter) {
     super();
     this.painter = painter;
@@ -42,12 +53,22 @@ class MousemoveState extends State {
 
   doEvent(event) {
     if (event.type === 'mousemove') {
-      this.painter.mode.move(this.painter.layer, event, this.painter.context);
+      if (!(this.mode instanceof SelectionMode)) {
+        this.painter.mode.move(this.painter.layer, event, this.painter.context);
+        this.painter.changeState(new DrawMousemoveState(this.painter));
+      }
     } else if (event.type === 'mouseup') {
-      this.painter.mode.create(this.painter.layer, event, this.painter.context);
-      this.painter.changeState(new IdleState(this.painter));
+      if (!(this.mode instanceof SelectionMode)) {
+        this.painter.mode.create(this.painter.layer, event, this.painter.context);
+        this.painter.changeState(new IdleState(this.painter));
+      }
+    } else if (event.type === 'keydown' && event.code === 'Escape') {
+      if (!(this.mode instanceof SelectionMode)) {
+        this.painter.layer.removeCurrentElement(event, this.painter.context);
+        this.painter.changeState(new IdleState(this.painter));
+      }
     }
   }
 }
 
-export { State, IdleState, MousedownState, MousemoveState };
+export { State, IdleState, DrawMousedownState, DrawMousemoveState };

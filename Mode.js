@@ -1,15 +1,15 @@
 class Mode {
-  constructor() { }
+  constructor() { /* Base class contructor */ }
 
-  draw(layer, event, painter) {
+  draw(layer, event, context) {
     throw new Error('draw method not implemented');
   }
 
-  move(layer, event, painter) {
+  move(layer, event, context) {
     throw new Error('move method not implemented');
   }
 
-  create(layer, event, painter) {
+  create(layer, event, context) {
     throw new Error('create method not implemented');
   }
 }
@@ -19,17 +19,19 @@ class SelectionMode extends Mode {
     super();
   }
 
-  draw(layer, event, painter) {
+  draw(layer, event, context) {
     return;
   }
 
-  move(layer, event, painter) {
+  move(layer, event, context) {
     return;
   }
 
-  create(layer, event, painter) {
-
+  create(layer, event, context) {
+    return;
   }
+
+
 }
 
 class LineMode extends Mode {
@@ -38,15 +40,21 @@ class LineMode extends Mode {
   }
 
   draw(layer, event, context) {
-    layer.drawLine(event, context);
+    if (layer !== undefined) {
+      layer.drawLine(event, context);
+    }
   }
 
   move(layer, event, context) {
-    layer.scaleLine(event, context);
+    if (layer !== undefined) {
+      layer.scaleLine(event, context);
+    }
   }
 
   create(layer, event, context) {
-    layer.createLine(event, context);
+    if (layer !== undefined) {
+      layer.createLine(event, context);
+    }
   }
 }
 
@@ -56,15 +64,21 @@ class RectangleMode extends Mode {
   }
 
   draw(layer, event, context) {
-    layer.drawRectangle(event, context);
+    if (layer !== undefined) {
+      layer.drawRectangle(event, context);
+    }
   }
 
   move(layer, event, context) {
-    layer.scaleRectangle(event, context);
+    if (layer !== undefined) {
+      layer.scaleRectangle(event, context);
+    }
   }
 
   create(layer, event, context) {
-    layer.createRectangle(event, context);
+    if (layer !== undefined) {
+      layer.createRectangle(event, context);
+    }
   }
 }
 
@@ -74,15 +88,21 @@ class OvalMode extends Mode {
   }
 
   draw(layer, event, context) {
-    layer.drawOval(event, context);
+    if (layer !== undefined) {
+      layer.drawOval(event, context);
+    }
   }
 
   move(layer, event, context) {
-    layer.scaleOval(event, context);
+    if (layer !== undefined) {
+      layer.scaleOval(event, context);
+    }
   }
 
   create(layer, event, context) {
-    layer.createOval(event, context);
+    if (layer !== undefined) {
+      layer.createOval(event, context);
+    }
   }
 }
 

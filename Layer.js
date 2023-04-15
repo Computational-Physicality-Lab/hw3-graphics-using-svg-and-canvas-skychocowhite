@@ -1,14 +1,11 @@
-const svgns = 'http://www.w3.org/2000/svg';
-
 class Layer {
   constructor() { /* Base class constructor */ }
 
   getLayerPoint(layer, x, y) {
-    let point = {
+    return {
       x: x - layer.getBoundingClientRect().left,
       y: y - layer.getBoundingClientRect().top
     };
-    return point;
   }
 
   drawLine() {
@@ -31,6 +28,8 @@ class CanvasLayer extends Layer {
 
 
   drawLine(event, context) {
+    if (context.borderColor === 'none') { return; }
+
     let tmpLayer = document.getElementById('tmpCanvasLayer');
     let point = this.getLayerPoint(tmpLayer, event.clientX, event.clientY);
 
@@ -39,6 +38,8 @@ class CanvasLayer extends Layer {
   }
 
   scaleLine(event, context) {
+    if (context.borderColor === 'none') { return; }
+
     let tmpLayer = document.getElementById('tmpCanvasLayer');
     let ctx = tmpLayer.getContext('2d');
     let point = this.getLayerPoint(tmpLayer, event.clientX, event.clientY);
@@ -53,6 +54,8 @@ class CanvasLayer extends Layer {
   }
 
   createLine(event, context) {
+    if (context.borderColor === 'none') { return; }
+
     let canvasLayer = document.getElementById('canvasLayer');
     let tmpLayer = document.getElementById('tmpCanvasLayer');
     let ctx = canvasLayer.getContext('2d');
@@ -169,7 +172,15 @@ class CanvasLayer extends Layer {
     tmpCtx.clearRect(0, 0, tmpLayer.width, tmpLayer.height);
     context.firstMouseX = context.firstMouseY = 0;
   }
+
+  removeCurrentElement(event, context) {
+    let tmpLayer = document.getElementById('tmpCanvasLayer');
+    let ctx = tmpLayer.getContext('2d');
+    ctx.clearRect(0, 0, tmpLayer.width, tmpLayer.height);
+  }
 }
+
+const svgns = 'http://www.w3.org/2000/svg';
 
 class SVGLayer extends Layer {
   constructor() {
@@ -177,6 +188,8 @@ class SVGLayer extends Layer {
   }
 
   drawLine(event, context) {
+    if (context.borderColor === 'none') { return; }
+
     let element = document.createElementNS(svgns, 'line');
     let svgLayer = document.getElementById('svgLayer');
     let point = this.getLayerPoint(svgLayer, event.clientX, event.clientY);
@@ -196,6 +209,8 @@ class SVGLayer extends Layer {
   }
 
   scaleLine(event, context) {
+    if (context.borderColor === 'none') { return; }
+
     let element = context.drawingElement;
     let svgLayer = document.getElementById('svgLayer');
     let point = this.getLayerPoint(svgLayer, event.clientX, event.clientY);
@@ -205,6 +220,8 @@ class SVGLayer extends Layer {
   }
 
   createLine(event, context) {
+    if (context.borderColor === 'none') { return; }
+
     let element = context.drawingElement;
     let svgLayer = document.getElementById('svgLayer');
     let point = this.getLayerPoint(svgLayer, event.clientX, event.clientY);
@@ -306,6 +323,13 @@ class SVGLayer extends Layer {
     }
     context.firstMouseX = context.firstMouseY = 0.0;
     context.drawingElement = undefined;
+  }
+
+  removeCurrentElement(event, context) {
+    if (context.drawingElement !== undefined) {
+      context.firstMouseX = context.firstMouseY = 0.0;
+      context.drawingElement.remove();
+    }
   }
 }
 
