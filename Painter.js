@@ -10,6 +10,16 @@ class Painter {
     this.layer = new SVGLayer();
     this.layerMode = "svg";
     this.mode = new RectangleMode();
+    this.colorMap = {
+      'none': 'none',
+      'white': 'white',
+      'gray': 'gray',
+      'black': 'black',
+      'yellow': 'rgb(255, 255, 78)',
+      'red': 'rgb(249, 80, 80)',
+      'blue': 'rgb(143, 186, 255)',
+      'green': 'rgb(134, 201, 134)',
+    };
   }
 
   setMode(mode) {
@@ -21,6 +31,7 @@ class Painter {
   }
 
   doEvent(event) {
+    console.log(this.state);
     this.state.doEvent(event);
   }
 

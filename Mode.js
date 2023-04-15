@@ -77,7 +77,7 @@ class RectangleMode extends Mode {
 
   create(layer, event, context) {
     if (layer !== undefined) {
-      layer.createRectangle(event, context);
+      return layer.createRectangle(event, context);
     }
   }
 }

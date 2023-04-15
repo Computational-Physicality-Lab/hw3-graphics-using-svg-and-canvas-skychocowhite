@@ -275,9 +275,11 @@ class SVGLayer extends Layer {
       Math.abs(context.firstMouseY - point.y) < 10) {
 
       element.remove();
+      element = undefined;
     }
     context.firstMouseX = context.firstMouseY = 0.0;
     context.drawingElement = undefined;
+    return element;
   }
 
   drawOval(event, context) {

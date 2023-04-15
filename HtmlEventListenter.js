@@ -11,16 +11,6 @@ const ovalModeCircle = document.querySelector("#ovalModeCircle");
 const borderNoneButton = document.querySelector('#noneBorderColor');
 const fillNoneButton = document.querySelector('#noneFillColor');
 
-const colorMap = {
-  'white': 'white',
-  'gray': 'gray',
-  'black': 'black',
-  'yellow': 'rgb(255, 255, 78)',
-  'red': 'rgb(249, 80, 80)',
-  'blue': 'rgb(143, 186, 255)',
-  'green': 'rgb(134, 201, 134)',
-}
-
 mainPanel.setAttribute('tabindex', -1);
 mainPanel.focus();
 mainPanel.addEventListener('keydown', doEvent);
@@ -36,6 +26,12 @@ function doEvent(event) {
   console.log(event.type);
   painter.doEvent(event);
   event.stopPropagation();
+}
+
+function resetSelectionSVGElement() {
+  if (painter.context.selectionElement !== undefined) {
+    painter.context.selectionElement.removeAttribute('filter');
+  }
 }
 
 document.querySelectorAll('input[name="layer"]').forEach((element) => {
@@ -68,6 +64,7 @@ document.querySelectorAll('input[name="layer"]').forEach((element) => {
     } else {
       throw new Error('Undefined layer selection is clicked');
     }
+    resetSelectionSVGElement();
     painter.layerMode = event.target.value;
   });
 });
@@ -87,6 +84,7 @@ document.querySelectorAll('input[name="mode"]').forEach((element) => {
     } else {
       throw new Error('Undefined mode is clicked');
     }
+    resetSelectionSVGElement();
   });
 });
 
@@ -96,15 +94,20 @@ document.querySelectorAll('input[name="borderColor"]').forEach((element) => {
 
     fillNoneButton.disabled = false;
     fillNoneButton.parentElement.style.opacity = 1;
-    painter.context.borderColor = event.target.value;
+    painter.context.borderColor = painter.colorMap[event.target.value];
     if (event.target.value === 'none') {
       rectangleModeSquare.style.borderColor = 'white';
       ovalModeCircle.style.borderColor = 'white';
       fillNoneButton.disabled = true;
       fillNoneButton.parentElement.style.opacity = 0.5;
     } else {
-      rectangleModeSquare.style.borderColor = colorMap[event.target.value];
-      ovalModeCircle.style.borderColor = colorMap[event.target.value];
+      rectangleModeSquare.style.borderColor = painter.colorMap[event.target.value];
+      ovalModeCircle.style.borderColor = painter.colorMap[event.target.value];
+    }
+
+    if (painter.context.selectionElement !== undefined) {
+      if (painter.context.selectionElement.tagName === 'line' && event.target.value === 'none') { return; }
+      painter.context.selectionElement.style.stroke = painter.colorMap[event.target.value];
     }
   });
 });
@@ -113,6 +116,9 @@ document.querySelector('input[name="borderWidth"]').addEventListener('change', f
   console.log('border width set to ' + event.target.value);
 
   painter.context.borderWidth = event.target.value;
+  if (painter.context.selectionElement !== undefined) {
+    painter.context.selectionElement.style.strokeWidth = event.target.value;
+  }
 });
 
 document.querySelectorAll('input[name="fillColor"]').forEach((element) => {
@@ -121,17 +127,27 @@ document.querySelectorAll('input[name="fillColor"]').forEach((element) => {
 
     borderNoneButton.disabled = false;
     borderNoneButton.parentElement.style.opacity = 1;
-    painter.context.fillColor = event.target.value;
+    painter.context.fillColor = painter.colorMap[event.target.value];
     if (event.target.value === 'none') {
       rectangleModeSquare.style.backgroundColor = 'white';
       ovalModeCircle.style.backgroundColor = 'white';
       borderNoneButton.disabled = true;
       borderNoneButton.parentElement.style.opacity = 0.5;
     } else {
-      rectangleModeSquare.style.backgroundColor = colorMap[event.target.value];
-      ovalModeCircle.style.backgroundColor = colorMap[event.target.value];
+      rectangleModeSquare.style.backgroundColor = painter.colorMap[event.target.value];
+      ovalModeCircle.style.backgroundColor = painter.colorMap[event.target.value];
+    }
+
+    if (painter.context.selectionElement !== undefined) {
+      painter.context.selectionElement.style.fill = painter.colorMap[event.target.value];
     }
   });
+});
+
+document.querySelector('#layerDeletion').addEventListener('click', function (event) {
+  if (painter.context.selectionElement !== undefined) {
+    painter.context.selectionElement.remove();
+  }
 });
 
 document.querySelector('#allDeletion').addEventListener('click', function (event) {
@@ -150,3 +166,4 @@ tmpCanvasLayer.addEventListener('mouseup', doEvent);
 svgLayer.addEventListener('mousedown', doEvent);
 svgLayer.addEventListener('mousemove', doEvent);
 svgLayer.addEventListener('mouseup', doEvent);
+svgLayer.addEventListener('click', doEvent);
