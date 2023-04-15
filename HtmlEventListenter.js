@@ -32,6 +32,7 @@ function resetSelectionSVGElement() {
   if (painter.context.selectionElement !== undefined) {
     painter.context.selectionElement.removeAttribute('filter');
   }
+  painter.context.selectionElement = undefined;
 }
 
 document.querySelectorAll('input[name="layer"]').forEach((element) => {

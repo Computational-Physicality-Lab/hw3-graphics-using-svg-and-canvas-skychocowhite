@@ -1,5 +1,6 @@
-import { SVGLayer } from "./Layer.js";
+import { CanvasLayer, SVGLayer } from "./Layer.js";
 import { SelectionMode } from "./Mode.js";
+import { floodFill } from "./floodfill.js";
 
 function addSVGElementMouseDownEvent(painter, element) {
   element.addEventListener('mousedown', function (event) {
@@ -73,6 +74,12 @@ class IdleState extends State {
           this.painter.changeState(new SVGLayerSelectionMouseDownState(this.painter));
         } else if (this.painter.layer instanceof SVGLayer && event.target.tagName === 'svg') {
           this.painter.changeState(new SVGLayerBackgroundMouseDownState(this.painter));
+        } else if (this.painter.layer instanceof CanvasLayer) {
+          if (this.painter.context.fillColor !== 'none') {
+            floodFill(event, document.getElementById('canvasLayer'), this.painter.context.fillColor, false);
+          } else {
+            floodFill(event, document.getElementById('canvasLayer'), 'rgb(0, 0, 0)', true);
+          }
         }
       }
     }
@@ -144,7 +151,6 @@ class SVGLayerSelectionMouseDownState extends State {
         return;
       }
 
-      console.log(event.target);
       if (this.painter.context.selectionElement !== undefined) {
         this.painter.context.selectionElement.removeAttribute('filter');
       }
@@ -161,6 +167,7 @@ class SVGLayerSelectionMouseDownState extends State {
       }
 
       let borderColor = Object.keys(this.painter.colorMap).find(key => this.painter.colorMap[key] === event.target.style.stroke);
+      console.log(borderColor);
       document.querySelector(`#borderColors input[value="${borderColor}"]`).dispatchEvent(new Event('change'));
       document.querySelector(`#borderColors input[value="${borderColor}"]`).checked = true;
 
@@ -247,12 +254,12 @@ class SVGLayerSelectionMouseMoveState extends State {
     } else if (event.type === 'mouseup') {
       this.painter.context.firstMouseX = this.painter.context.firstMouseY = 0.0;
       this.painter.context.mouseDownElement = undefined;
+      this.painter.context.originElementPoints = [];
       this.painter.changeState(new IdleState(this.painter));
     } else if (event.type === 'keydown' && event.code === 'Escape') {
       if (this.painter.context.selectionElement !== undefined) {
         this.painter.context.selectionElement.removeAttribute('filter');
       }
-
 
       if (this.painter.context.selectionElement.tagName === 'line') {
         this.painter.context.selectionElement.setAttribute('x1', this.painter.context.originElementPoints[0].x);

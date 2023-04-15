@@ -6,7 +6,7 @@ class Context {
     this.mouseDownElement = undefined;
     this.originElementPoints = [];
     this.selectionElement = undefined;
-    this.borderColor = "black";
+    this.borderColor = "rgb(0, 0, 0)";
     this.fillColor = "rgb(134, 201, 134)";
     this.borderWidth = 3;
   }

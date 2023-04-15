@@ -12,9 +12,9 @@ class Painter {
     this.mode = new RectangleMode();
     this.colorMap = {
       'none': 'none',
-      'white': 'white',
-      'gray': 'gray',
-      'black': 'black',
+      'white': 'rgb(255, 255, 255)',
+      'gray': 'rgb(128, 128, 128)',
+      'black': 'rgb(0, 0, 0)',
       'yellow': 'rgb(255, 255, 78)',
       'red': 'rgb(249, 80, 80)',
       'blue': 'rgb(143, 186, 255)',

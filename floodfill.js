@@ -10,7 +10,7 @@
 * floodColor is the color to fill with, of the form: "rgb(191, 191, 191)" which is what is
 *      returned by xxx.style.backgroundColor;
 */
-function floodFill(event, canvas, floodColor) {
+function floodFill(event, canvas, floodColor, ifTransparent) {
   // make a promise so that we can enforce synchronous order to events
   let startPromise = new Promise((resolve, reject) => {
     document.body.style.cursor = "progress"; // change cursor to loading
@@ -36,7 +36,11 @@ function floodFill(event, canvas, floodColor) {
       let colorPixel = (x, y) => {
         let valStr = floodColor.substring(floodColor.indexOf("(") + 1, floodColor.length - 1).split(", ");
         let vals = valStr.map(e => parseInt(e, 10));
-        vals.push(255);
+        if (ifTransparent === true) {
+          vals.push(0);
+        } else {
+          vals.push(255);
+        }
         context.putImageData(new ImageData(new Uint8ClampedArray(vals), 1, 1), x, y);
       };
 
@@ -45,7 +49,7 @@ function floodFill(event, canvas, floodColor) {
         let x = newPos[0];
         let y = newPos[1];
 
-        while(y >= 0 && matchStartColor(x, y)) {
+        while (y >= 0 && matchStartColor(x, y)) {
           y--;
         }
 
@@ -56,7 +60,7 @@ function floodFill(event, canvas, floodColor) {
           colorPixel(x, y)
 
           if (x > 0) {
-            if (matchStartColor(x-1, y)) {
+            if (matchStartColor(x - 1, y)) {
               if (!reachLeft) {
                 pixelStack.push([x - 1, y]);
                 reachLeft = true;
@@ -68,7 +72,7 @@ function floodFill(event, canvas, floodColor) {
           }
 
           if (x < canvas.width - 2) {
-            if (matchStartColor(x+1, y)) {
+            if (matchStartColor(x + 1, y)) {
               if (!reachRight) {
                 pixelStack.push([x + 1, y]);
                 reachRight = true;
@@ -83,5 +87,7 @@ function floodFill(event, canvas, floodColor) {
         }
       }
     })
-    .finally(() => {document.body.style.cursor = "default";}); // when floodfill finally ends, change the cursor back
+    .finally(() => { document.body.style.cursor = "default"; }); // when floodfill finally ends, change the cursor back
 };
+
+export { floodFill };
